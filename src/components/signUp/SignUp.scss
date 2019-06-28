@@ -1,0 +1,13 @@
+.sign-up-form {
+  height: 100%;
+  padding: 100px 0;
+  width: 100%;
+
+  .form-grid-container {
+    height: 100%;
+
+    .form-grid-column {
+      max-width: 450px;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+.unclassified-header {
+  background: #007a33;
+  color: white;
+  font-style: bold;
+  height: 22px;
+  > h4 {
+    text-align: center;
+    font-size: 16px;
+    margin: 0 auto;
+    padding-top: 2px;
+  }
+}
