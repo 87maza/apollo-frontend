@@ -4,6 +4,9 @@ import { Form, Field, Formik } from 'formik'
 
 import './Navbar.scss'
 import { CustomField } from '../CustomField/CustomField'
+import { client, signInMutation } from '../../graphql'
+import { Mutation, ApolloConsumer } from 'react-apollo'
+import gql from 'graphql-tag'
 
 class Navbar extends Component {
   initialValues = {
@@ -11,11 +14,37 @@ class Navbar extends Component {
     password: '',
   }
 
-  handleSubmit = () => {
-    console.log('sumbitting')
+  handleSubmit = ({ email, password }: any) => {
+    console.log('sign in ')
+    // client
+    //   .mutation({ mutation: signInMutation({ email, password }) })
+    //   .then(res => {
+    //     debugger
+    //   })
   }
 
   render() {
+    const SIGN_UP = gql`
+      mutation SignUp(
+        $email: String!
+        $password: String!
+        $role: String!
+        $name: String!
+      ) {
+        signUp(
+          input: {
+            email: $email
+            password: $password
+            role: $role
+            name: $name
+          }
+        ) {
+          email
+          role
+        }
+      }
+    `
+
     return (
       <nav>
         <div className="unclassified-header">
@@ -23,7 +52,6 @@ class Navbar extends Component {
         </div>
         <Formik initialValues={this.initialValues} onSubmit={this.handleSubmit}>
           <Form style={{ display: 'flex', float: 'right' }}>
-            {/* <Segment stacked> */}
             <Field
               name="email"
               component={CustomField({
@@ -49,7 +77,9 @@ class Navbar extends Component {
             <Button size="medium" type="submit" className="sign-in-btn">
               SIGN IN
             </Button>
-            {/* </Segment> */}
+            <Button size="medium" className="sign-in-btn">
+              LOG OUT
+            </Button>
           </Form>
         </Formik>
       </nav>

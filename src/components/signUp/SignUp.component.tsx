@@ -5,6 +5,9 @@ import * as Yup from 'yup'
 
 import './SignUp.scss'
 import { CustomField } from '../CustomField/CustomField'
+import { withApollo } from 'react-apollo'
+import { Mutation, ApolloConsumer } from 'react-apollo'
+import gql from 'graphql-tag'
 
 const signupSchema = Yup.object().shape({
   name: Yup.string()
@@ -23,145 +26,143 @@ const signupSchema = Yup.object().shape({
       'Password must have at least 1 special character (@,!,#,$,%,^,&,*,_, etc.).'
     )
     .required('Password is required'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Passwords do not match')
-    .required('Passwords do not match'),
 })
 
 const initialValues = {
   name: '',
-  role: '',
+  role: 'member',
   email: '',
   password: '',
 }
 
 const SignUp = (props: any) => {
-  const { history, authContainer } = props
-  const handleSubmit = ({ password, email, name, role }: any) => {
-    const params = {
-      email,
-      password,
+  const SIGN_UP = gql`
+    mutation SignUp(
+      $email: String!
+      $password: String!
+      $role: String!
+      $name: String!
+    ) {
+      signUp(
+        input: { email: $email, password: $password, role: $role, name: $name }
+      ) {
+        email
+        role
+      }
     }
-
-    // authContainer
-    //   .signUp(params)
-    //   .catch((error: any) => {
-    //     history.push({
-    //       pathname: '/signIn',
-    //       search: '?userExists=true',
-    //     })
-    //   })
-    //   .then(
-    //     history.push({
-    //       pathname: '/signIn',
-    //       search: '?verification=true',
-    //     })
-    //   )
-  }
+  `
 
   return (
-    <div className="sign-up-form">
-      <Grid
-        textAlign="center"
-        className="form-grid-container"
-        verticalAlign="middle"
-      >
-        <Grid.Column className="form-grid-column">
-          <Header as="h2" textAlign="center">
-            CREATE AN ACCOUNT
-          </Header>
-          <Formik
-            initialValues={initialValues}
-            onSubmit={handleSubmit}
-            validationSchema={signupSchema}
-          >
-            <Form className="ui form">
-              <Segment stacked>
-                <Field
-                  name="name"
-                  component={CustomField({
-                    icon: 'address card outline',
-                    type: 'text',
-                    placeholder: 'Name',
-                    iconPosition: 'left',
-                    fluid: true,
-                    disabled: false,
-                  })}
-                />
-                <Field
-                  name="role"
-                  component={() => {
-                    const options = [
-                      {
-                        key: 'member',
-                        text: 'member',
-                        value: 'member',
-                      },
-                      {
-                        key: 'admin',
-                        text: 'admin',
-                        value: 'admin',
-                      },
-                    ]
-                    return (
-                      <Dropdown
-                        placeholder="Role"
-                        fluid
-                        selection
-                        options={options}
-                        style={{ margin: '0 0 1em' }}
-                      />
-                    )
-                  }}
-                />
-                <Field
-                  name="email"
-                  component={CustomField({
-                    icon: 'mail',
-                    type: 'text',
-                    placeholder: 'Email',
-                    iconPosition: 'left',
-                    fluid: true,
-                    disabled: false,
-                  })}
-                />
-                <Field
-                  name="password"
-                  component={CustomField({
-                    icon: 'lock',
-                    type: 'password',
-                    placeholder: 'Password',
-                    iconPosition: 'left',
-                    fluid: true,
-                    disabled: false,
-                  })}
-                />
-                <Field
-                  name="confirmPassword"
-                  component={CustomField({
-                    icon: 'lock',
-                    type: 'password',
-                    placeholder: 'Confirm Password',
-                    iconPosition: 'left',
-                    fluid: true,
-                    disabled: false,
-                  })}
-                />
-                <Button
-                  color="blue"
-                  fluid
-                  size="large"
-                  type="submit"
-                  className="QA_sign-up-btn"
+    <ApolloConsumer>
+      {client => (
+        <Mutation
+          mutation={SIGN_UP}
+          onCompleted={(res: any) => {
+            // localStorage.setItem('token', res)
+            // client.writeData({ data: { isLoggedIn: true } })
+          }}
+        >
+          {(signUp: Function, res: any) => {
+            const handleSubmit = ({ password, email, name, role }: any) => {
+              signUp({ variables: { password, email, name, role } })
+            }
+            return (
+              <div className="sign-up-form">
+                <Grid
+                  textAlign="center"
+                  className="form-grid-container"
+                  verticalAlign="middle"
                 >
-                  SIGN UP
-                </Button>
-              </Segment>
-            </Form>
-          </Formik>
-        </Grid.Column>
-      </Grid>
-    </div>
+                  <Grid.Column className="form-grid-column">
+                    <Header as="h2" textAlign="center">
+                      CREATE AN ACCOUNT
+                    </Header>
+                    <Formik
+                      initialValues={initialValues}
+                      onSubmit={handleSubmit}
+                      validationSchema={signupSchema}
+                    >
+                      <Form className="ui form">
+                        <Segment stacked>
+                          <Field
+                            name="name"
+                            component={CustomField({
+                              icon: 'address card outline',
+                              type: 'text',
+                              placeholder: 'Name',
+                              iconPosition: 'left',
+                              fluid: true,
+                              disabled: false,
+                            })}
+                          />
+                          <Field
+                            name="role"
+                            component={() => {
+                              const options = [
+                                {
+                                  key: 'member',
+                                  text: 'member',
+                                  value: 'member',
+                                },
+                                {
+                                  key: 'admin',
+                                  text: 'admin',
+                                  value: 'admin',
+                                },
+                              ]
+                              return (
+                                <Dropdown
+                                  placeholder="Role"
+                                  fluid
+                                  selection
+                                  options={options}
+                                  style={{ margin: '0 0 1em' }}
+                                />
+                              )
+                            }}
+                          />
+                          <Field
+                            name="email"
+                            component={CustomField({
+                              icon: 'mail',
+                              type: 'text',
+                              placeholder: 'Email',
+                              iconPosition: 'left',
+                              fluid: true,
+                              disabled: false,
+                            })}
+                          />
+                          <Field
+                            name="password"
+                            component={CustomField({
+                              icon: 'lock',
+                              type: 'password',
+                              placeholder: 'Password',
+                              iconPosition: 'left',
+                              fluid: true,
+                              disabled: false,
+                            })}
+                          />
+                          <Button
+                            color="blue"
+                            fluid
+                            size="large"
+                            type="submit"
+                            className="QA_sign-up-btn"
+                          >
+                            SIGN UP
+                          </Button>
+                        </Segment>
+                      </Form>
+                    </Formik>
+                  </Grid.Column>
+                </Grid>
+              </div>
+            )
+          }}
+        </Mutation>
+      )}
+    </ApolloConsumer>
   )
 }
-export default SignUp
+export default withApollo(SignUp)
