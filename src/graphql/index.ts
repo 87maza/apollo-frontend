@@ -1,6 +1,4 @@
-import { ApolloClient, ApolloLink, InMemoryCache, HttpLink } from 'apollo-boost'
-
-import gql from 'graphql-tag'
+import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-boost'
 
 const cache = new InMemoryCache()
 
@@ -17,15 +15,5 @@ export const client = new ApolloClient({
 cache.writeData({
   data: {
     isLoggedIn: !!localStorage.getItem('token'),
-    cartItems: [],
   },
 })
-
-export const signInMutation = (input: {
-  email: string
-  password: string
-}) => gql`
-  mutation {
-    signUp(input: ${input})
-  }
-`

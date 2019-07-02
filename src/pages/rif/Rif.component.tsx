@@ -8,16 +8,16 @@ interface IProps {
   history: History
 }
 
-class Home extends Component<IProps> {
+class Rif extends Component<IProps> {
   render() {
     return (
       <div>
         <Navbar />
         <div style={{ marginTop: '50px' }}>
-          <SignUp />
+          {/* insert sign up component */}
         </div>
       </div>
     )
   }
 }
-export default Home
+export default Rif

@@ -1,7 +1,7 @@
 import React from 'react'
 import { HashRouter } from 'react-router-dom'
 import Router from './routes/MainRouter.component'
-import { withApollo, ApolloProvider } from 'react-apollo'
+import { ApolloProvider } from 'react-apollo'
 import 'semantic-ui-css/semantic.min.css'
 import { client } from './graphql'
 

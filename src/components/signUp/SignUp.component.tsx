@@ -5,8 +5,7 @@ import * as Yup from 'yup'
 
 import './SignUp.scss'
 import { CustomField } from '../CustomField/CustomField'
-import { withApollo } from 'react-apollo'
-import { Mutation, ApolloConsumer } from 'react-apollo'
+import { Mutation, ApolloConsumer, withApollo } from 'react-apollo'
 import gql from 'graphql-tag'
 
 const signupSchema = Yup.object().shape({
@@ -58,8 +57,8 @@ const SignUp = (props: any) => {
         <Mutation
           mutation={SIGN_UP}
           onCompleted={(res: any) => {
-            // localStorage.setItem('token', res)
-            // client.writeData({ data: { isLoggedIn: true } })
+            //MAYBE SHOW A BANNER MESSAGE
+            console.log('user successfully created')
           }}
         >
           {(signUp: Function, res: any) => {
